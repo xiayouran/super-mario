@@ -12,6 +12,7 @@ class Level(object):
 
         self.info = Info(state_str='level')
         self.setup_background()
+        self.setup_player()
 
     def setup_background(self):
         self.background = IMAGEDICT['level_1']
@@ -19,13 +20,14 @@ class Level(object):
         self.background = pygame.transform.scale(self.background, (int(rect.width * SCALE),
                                                                    int(rect.height * SCALE)))
 
-    def setup_plater(self):
+    def setup_player(self):
         self.player = Player(name='mario')
         self.player.rect.x = 300
         self.player.rect.y = 300
 
     def update_position(self):
-        pass
+        self.player.rect.x += self.player.x_speed
+        self.player.rect.y += self.player.y_speed
 
     def update(self, surface, keys):
         self.draw(surface)
@@ -35,6 +37,7 @@ class Level(object):
 
     def draw(self, surface):
         surface.blit(self.background, (0, 0))
+        surface.blit(self.player.mario_img, self.player.rect)
         self.info.draw(surface)
         self.info.update()
 
