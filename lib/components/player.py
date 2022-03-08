@@ -1,3 +1,6 @@
+import os
+import json
+
 import pygame
 from lib.constants import *
 from lib.init import IMAGEDICT
@@ -9,6 +12,7 @@ class Player(pygame.sprite.Sprite):
         super(Player, self).__init__()
 
         self.name = name
+        self.load_data()
         self.setup_states()
         self.setup_speed()
         self.setup_timers()
@@ -19,15 +23,32 @@ class Player(pygame.sprite.Sprite):
         # self.menu_loc = (280, 65)
         self.timer = 0
 
+    def load_data(self):
+        file_name = self.name + '.json'
+        file_path = os.path.join('resources/json_data/player', file_name)
+        with open(file_path) as f:
+            self.player_data = json.load(f)
+
     def setup_states(self):
+        self.state = 'stand'
+        self.face_right = True
         self.live = None
         self.dead = None
         self.big = None
         self.small = None
 
     def setup_speed(self):
+        speed = self.player_data['speed']
         self.x_speed = 0
         self.y_speed = 0
+
+        self.max_walk_speed = speed['max_walk_speed']
+        self.max_run_speed = speed['max_run_speed']
+        self.max_y_velocity = speed['max_y_velocity']
+        self.walk_accel = speed['walk_accel']
+        self.run_accel = speed['run_accel']
+        self.turn_accel = speed['turn_accel']
+        self.jump_velocity = speed['jump_velocity']
 
     def setup_timers(self):
         # walk time
@@ -37,59 +58,115 @@ class Player(pygame.sprite.Sprite):
 
     def load_images(self):
         mario_img = IMAGEDICT['mario_bros']
-        # self.mario_surface = []
-        # self.mario_surface.append(load_img(mario_img, (178, 32), (12, 16), (0, 0, 0), SCALE))
+        image_frames = self.player_data['image_frames']
 
-        self.right_img = []
-        self.left_img = []
-        self.up_img = []
-        self.down_img = []
+        self.right_small_normal_imgs = []
+        self.right_big_normal_imgs = []
+        self.right_big_fire_imgs = []
+        self.left_small_normal_imgs = []
+        self.left_big_normal_imgs = []
+        self.left_big_fire_imgs = []
 
-        img_list = [
-            (178, 32, 12, 16),
-            (80, 32, 15, 16),
-            (96, 32, 16, 16),
-            (112, 32, 16, 16),
-        ]
+        for k, v in image_frames.items():
+            for img_rect in v:
+                right_img = load_img(mario_img, (img_rect['x'], img_rect['y']), (img_rect['width'], img_rect['height']), (0, 0, 0), SCALE)
+                left_img = pygame.transform.flip(right_img, True, False)
 
-        for img_rect in img_list:
-            right_img = load_img(mario_img, (img_rect[0], img_rect[1]), (img_rect[2], img_rect[3]), (0, 0, 0), SCALE)
-            left_img = pygame.transform.flip(right_img, True, True)
-            up_img = pygame.transform.rotate(right_img, 90)
-            down_img = pygame.transform.rotate(right_img, -90)
-
-            self.right_img.append(right_img)
-            self.left_img.append(left_img)
-            self.up_img.append(up_img)
-            self.down_img.append(down_img)
+                if k == 'right_small_normal':
+                    self.right_small_normal_imgs.append(right_img)
+                    self.left_small_normal_imgs.append(left_img)
+                elif k == 'right_big_normal':
+                    self.right_big_normal_imgs.append(right_img)
+                    self.left_big_normal_imgs.append(left_img)
+                elif k == 'right_big_fire':
+                    self.right_big_fire_imgs.append(right_img)
+                    self.left_big_fire_imgs.append(left_img)
 
         self.mario_index = 0
-        self.mario_surface = self.right_img
+        self.mario_surface = self.right_small_normal_imgs
         self.mario_img = self.mario_surface[self.mario_index]
         self.rect = self.mario_img.get_rect()
 
     def update(self, *args, **kwargs):
         self.current_time = pygame.time.get_ticks()
         keys = kwargs['keys']
-        if keys[pygame.K_RIGHT]:
-            self.x_speed = 5
-            self.y_speed = 0
-            self.mario_surface = self.right_img
-        if keys[pygame.K_LEFT]:
-            self.x_speed = -5
-            self.y_speed = 0
-            self.mario_surface = self.left_img
-        if keys[pygame.K_UP]:
-            self.x_speed = 0
-            self.y_speed = -5
-            self.mario_surface = self.up_img
-        if keys[pygame.K_DOWN]:
-            self.x_speed = 0
-            self.y_speed = 5
-            self.mario_surface = self.down_img
+        self.handel_states(keys)
+        # if keys[pygame.K_SPACE]:
+        #     self.state = 'jump'
+        #     self.y_speed = -5
+        #
+        # if self.state == 'walk':
+        #     if self.current_time - self.walking_time > 100:
+        #         self.walking_time = self.current_time
+        #         self.mario_index += 1
+        #         self.mario_index %= 4
+        # if self.state == 'jump':
+        #     self.mario_index = 4
 
+
+    def handel_states(self, keys):
+        if self.state == 'stand':
+            pass
+        elif self.state == 'walk':
+            pass
+        elif self.state == 'jump':
+            pass
+        elif self.state == 'basketball':
+            pass
+
+        if self.face_right:
+            self.mario_img = self.right_small_normal_imgs[self.mario_index]
+        else:
+            self.mario_img = self.left_small_normal_imgs[self.mario_index]
+
+    def stand(self, keys):
+        self.mario_index = 0
+        self.x_speed = 0
+        self.y_speed = 0
+
+        if keys[pygame.K_RIGHT]:
+            self.state = 'walk'
+            self.face_right = True
+        if keys[pygame.K_LEFT]:
+            self.state = 'walk'
+            self.face_right = False
+
+    def walk(self, keys):
         if self.current_time - self.walking_time > 100:
-            self.walking_time = self.current_time
-            self.mario_index += 1
-            self.mario_index %= 4
-        self.mario_img = self.mario_surface[self.mario_index]
+            if self.mario_index < 3:
+                self.mario_index += 1
+            else:
+                self.mario_index = 1
+
+        if keys[pygame.K_RIGHT]:
+            self.face_right = True
+            if self.x_speed < 0:
+                self.mario_index = 5
+            self.x_speed = self.get_speed(self.x_speed, self.run_accel, self.max_walk_speed, is_right=True)
+        elif keys[pygame.K_LEFT]:
+            self.face_right = False
+            if self.x_speed > 0:
+                self.mario_index = 5
+            self.x_speed = self.get_speed(self.x_speed, self.turn_accel, self.max_walk_speed, is_right=False)
+        else:
+            if self.face_right:
+                self.x_speed -= self.walk_accel
+                if self.x_speed <= 0:
+                    self.x_speed = 0
+                    self.state = 'stand'
+            else:
+                self.x_speed += self.walk_accel
+                if self.x_speed >= 0:
+                    self.x_speed = 0
+                    self.state = 'stand'
+
+    def jump(self, keys):
+        pass
+
+    def basketball(self, keys):
+        pass
+
+    def get_speed(self, cur_speed, a, max_speed, is_right=True):
+        if is_right:
+            return min(cur_speed + a, max_speed)
+        return max(cur_speed - a, -max_speed)
