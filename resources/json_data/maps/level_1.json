@@ -1,9 +1,9 @@
 {
     "image_name":"level_1",
     "maps":[
-        {"start_x":   0, "end_x": 9086, "player_x": 110, "player_y":538},
+        {"start_x":   0, "end_x": 9085, "player_x": 110, "player_y":536},
         {"start_x":9090, "end_x": 9890, "player_x":  80, "player_y": 60},
-        {"start_x":6740, "end_x": 9086, "player_x": 270, "player_y":450}
+        {"start_x":6740, "end_x": 9085, "player_x": 270, "player_y":450}
     ],
     "ground":[
         {"x":   0, "y":538, "width":2953, "height":60},

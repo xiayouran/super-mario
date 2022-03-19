@@ -103,16 +103,15 @@ class Player(pygame.sprite.Sprite):
         # if self.state == 'jump':
         #     self.mario_index = 4
 
-
     def handel_states(self, keys):
         if self.state == 'stand':
-            pass
+            self.stand(keys)
         elif self.state == 'walk':
-            pass
+            self.walk(keys)
         elif self.state == 'jump':
-            pass
+            self.jump(keys)
         elif self.state == 'basketball':
-            pass
+            self.basketball(keys)
 
         if self.face_right:
             self.mario_img = self.right_small_normal_imgs[self.mario_index]
@@ -132,7 +131,13 @@ class Player(pygame.sprite.Sprite):
             self.face_right = False
 
     def walk(self, keys):
-        if self.current_time - self.walking_time > 100:
+        if keys[pygame.K_s]:
+            self.max_walk_speed = self.max_run_speed
+            self.walk_accel = self.run_accel
+
+        if self.current_time - self.walking_time > self.get_frequency():
+            self.walking_time = self.current_time
+
             if self.mario_index < 3:
                 self.mario_index += 1
             else:
@@ -142,7 +147,7 @@ class Player(pygame.sprite.Sprite):
             self.face_right = True
             if self.x_speed < 0:
                 self.mario_index = 5
-            self.x_speed = self.get_speed(self.x_speed, self.run_accel, self.max_walk_speed, is_right=True)
+            self.x_speed = self.get_speed(self.x_speed, self.walk_accel, self.max_walk_speed, is_right=True)
         elif keys[pygame.K_LEFT]:
             self.face_right = False
             if self.x_speed > 0:
@@ -170,3 +175,8 @@ class Player(pygame.sprite.Sprite):
         if is_right:
             return min(cur_speed + a, max_speed)
         return max(cur_speed - a, -max_speed)
+
+    def get_frequency(self):
+        frequency = -60 / self.max_run_speed * abs(self.x_speed) + 80
+
+        return frequency
