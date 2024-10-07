@@ -1,7 +1,13 @@
+# -*- coding: utf-8 -*-
+# Author  : liyanpeng
+# Email   : yanpeng.li@cumt.edu.cn
+# Datetime: 2022/5/1 22:11
+# Filename: coin.py
 import pygame
+
+from lib.init import IMAGE_DICT
+from lib.config import SCALE
 from lib.utils import load_img
-from lib.init import IMAGEDICT
-from lib.constants import *
 
 
 class TwinklingCoin(pygame.sprite.Sprite):
@@ -11,17 +17,18 @@ class TwinklingCoin(pygame.sprite.Sprite):
         self.coin_surface = []
         self.coin_index = 0
         self.coin_size = (5, 8)
-        self.loc = [(1, 160), (9, 160), (17, 160)]
+        self.location_list = [(1, 160), (9, 160), (17, 160)]
         self.menu_loc = (280, 65)
         self.timer = 0
+        self.current_time = 0
 
-        self.load_coin()
+        self._load_coin()
         self.coin_img = self.coin_surface[self.coin_index]
 
-    def load_coin(self):
-        coin_img = IMAGEDICT['item_objects']
-        for p in self.loc:
-            self.coin_surface.append(load_img(coin_img, p, self.coin_size, (0, 0, 0), SCALE))
+    def _load_coin(self):
+        coin_img = IMAGE_DICT['item_objects']
+        for loc in self.location_list:
+            self.coin_surface.append(load_img(coin_img, loc, self.coin_size, (0, 0, 0), SCALE))
 
     def update(self, *args, **kwargs):
         self.current_time = pygame.time.get_ticks()

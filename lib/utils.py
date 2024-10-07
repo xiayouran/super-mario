@@ -1,5 +1,10 @@
-import pygame
+# -*- coding: utf-8 -*-
+# Author  : liyanpeng
+# Email   : yanpeng.li@cumt.edu.cn
+# Datetime: 2022/5/1 22:10
+# Filename: utils.py
 import os
+import pygame
 
 
 def get_imgs(img_path):
@@ -28,5 +33,3 @@ def load_img(img, loc, size, colorkey, scale):
     img_surface = pygame.transform.scale(img_surface, (int(size[0] * scale), int(size[1] * scale)))
 
     return img_surface
-
-

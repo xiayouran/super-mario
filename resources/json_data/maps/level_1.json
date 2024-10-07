@@ -154,7 +154,7 @@
             {"x":4330, "y":538, "direction":0, "type":0, "color":0}
         ]},
         {"5":[
-            {"x":4700, "y":538, "direction":0, "type":1, "color":1}
+            {"x":4700, "y":538, "direction":0, "type":1, "color":0}
         ]},
         {"6":[
             {"x":4900, "y":538, "direction":0, "type":0, "color":0},
