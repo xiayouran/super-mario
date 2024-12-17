@@ -23,13 +23,9 @@ def get_imgs(img_path):
 
 
 def load_img(img, loc, size, colorkey, scale):
-    # create a image surface
-    img_surface = pygame.Surface(size)
-    # add img to image surface
+    img_surface = pygame.Surface(size, pygame.SRCALPHA)
     img_surface.blit(img, (0, 0), (loc[0], loc[1], size[0], size[1]))
-    # cutout img by color
     img_surface.set_colorkey(colorkey)
-    # scale image surface
     img_surface = pygame.transform.scale(img_surface, (int(size[0] * scale), int(size[1] * scale)))
 
     return img_surface
